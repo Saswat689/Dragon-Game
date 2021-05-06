@@ -1,0 +1,307 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>Javascript game</title>
+	<style type="text/css">
+		*{
+			padding: 0;
+			margin: 0;
+		}
+		#game{
+			width: 1200px;
+			height: 500px;
+			margin: 80px auto;
+			/*background-color: #DCC70F;
+			border-bottom: 7px dashed green;*/
+			background-image: url("road.jpg"); /* The image used */
+  background-position: center; /* Center the image */
+  background-repeat: no-repeat; /* Do not repeat the image */
+  background-size: cover;
+		}
+		#character{
+			background-image: url("dragon.png"); /* The image used */
+  background-position: center; /* Center the image */
+  background-repeat: no-repeat; /* Do not repeat the image */
+  background-size: cover;
+			width: 95px;
+			height: 135px;
+			position: relative;
+			top: 108px;
+			left: 40px;
+		}
+		#sky{
+			width: 100%;
+			height: 250px;
+			position: relative;
+			top: 0;
+			left: 0;
+			/*background-color: #34BDC2;*/
+			/*border-bottom: 7px dashed green;*/
+		}
+		.animate{
+			animation: jump 500ms infinite linear;
+		}
+		#block{
+			background-image: url("cactus.png");
+  background-position: center; /* Center the image */
+  background-repeat: no-repeat; /* Do not repeat the image */
+  background-size: cover;
+			width: 60px;
+			height: 60px;
+			position: relative;
+			top: 57px;
+			left: 500px;
+			animation: block 2.8s infinite linear;
+		}
+		#block2{
+			background-image: url("cactus2.png");
+  background-position: center; /* Center the image */
+  background-repeat: no-repeat; /* Do not repeat the image */
+  background-size: cover;
+			width: 60px;
+			height: 80px;
+			position: relative;
+			top: -22px;
+			left: 1000px;
+			animation: block2 3.8s infinite linear;
+		}
+		@keyframes block{
+			0%{left: 800px;}
+			100%{left: 0px;}
+		}
+		@keyframes block2{
+			0%{left: 1100px;}
+			100%{left: 0px;}
+		}
+		@keyframes jump{
+			0%{top: 108px;}
+			30%{top: 20px;}
+			70%{top: 20px;}
+			100%{top: 108px;}
+		}
+		#cloud1{
+			position: relative;
+			top: 50px;
+			left: 400px;
+			animation: cloud1 10s infinite linear;
+		}
+		#cloud2{
+			position: relative;
+			top: 50px;
+			left: 800px;
+			animation: cloud2 20s infinite linear;
+		}
+		#sun{
+			position: relative;
+			top: 30px;
+			left: 800px;
+		}
+		@keyframes cloud1{
+			0%{left: 400px;}
+			100%{left: 0px;}
+/*			100%{left: 900px;}*/
+		}
+		@keyframes cloud2{
+			0%{left: 800px;}
+			100%{left: 0px;}
+/*			100%{left: 900px;}*/
+		}
+		#popup{
+			width: 250px;
+			height: 100px;
+			position: absolute;
+			left: 550px;
+			top: 250px;
+			border: 1px solid black;
+			background-color: #fff;
+			text-align: center;
+			display: none;
+			font-family: 'Helvetica';
+		}
+		#restart{
+			width: 50%;
+			height: 30px;
+			background-color: blue;
+			font-family: 'Helvetica';
+			color: white;
+			margin-top: 7px;
+		}
+		#scoreboard{
+			width: 200px;
+			height: 50px;
+			border: 2px solid white;
+			font-family: 'Helvetica';
+			font-weight: 700;
+			background-color: blue;
+			color: white;
+			position: absolute;
+			top: 10px;
+			border-radius: 6px;
+			left: 79.5%;
+		}
+		#score-text{
+			margin: 18px 13px;
+		}
+	</style>
+</head>
+<body>
+	<div id="game">
+		<div id="sky">
+			<img id="cloud1" src="cloud.png" width="100px" height="90px">
+			<img  id="cloud2" src="cloud.png" width="100px" height="90px">
+			<img id="sun" src="sun.png" width="75px" height="75px">
+			<h2 style="position: absolute; top: 247px; left: 925px; transform: rotate(-6deg); font-family: 'Helvetica'; color: white;" id="welcm-text">Welcome</h2>
+		</div>
+		<div id="character"></div>
+	<div id="block"></div>
+	<div id="block2"></div>
+	</div>
+	<div id="popup">
+		<h3 style="margin-top: 20px;">Oh No! You Lost</h3>
+		<button id="restart">Restart</button>
+	</div>
+	<div id="scoreboard">
+		<p id="score-text">Score:<i id="score">0</i></p>
+	</div>
+</body>
+<script type="text/javascript">
+		var restart_btn = document.getElementById('restart');
+		var character = document.getElementById("character");
+		var block = document.getElementById('block');
+		var popup = document.getElementById('popup');
+		var block2 = document.getElementById('block2');
+		var sky = document.getElementById('sky');
+		var game = document.getElementById('game');
+		block2.style.animationPlayState = 'paused';
+		block.style.animationPlayState = 'paused';
+		var score = document.getElementById('score');
+
+function sound(src) {
+  this.sound = document.createElement("audio");
+  this.sound.src = src;
+  this.sound.setAttribute("preload", "auto");
+  this.sound.setAttribute("controls", "none");
+  this.sound.style.display = "none";
+  document.body.appendChild(this.sound);
+  this.play = function(){
+    this.sound.play();
+  }
+  this.stop = function(){
+    this.sound.pause();
+  }
+}
+
+const startGame = () => {
+	block.style.animationPlayState = 'running';
+			block2.style.animationPlayState = 'running';
+			popup.style.display = 'none';
+			// mySound = new sound("Advent.mp3");
+			// mySound.play();
+}
+const increaseScore = () => score.innerHTML++; 
+
+window.addEventListener('keydown',() => {    
+     startGame();
+     setInterval(increaseScore,100)    
+})
+		// window.addEventListener('keydown',startGame,increaseScore);
+		// function startGame() {
+		// 	block.style.animationPlayState = 'running';
+		// 	block2.style.animationPlayState = 'running';
+		// 	popup.style.display = 'none';
+		// }
+		restart_btn.addEventListener('click',restart)
+		function restart() {
+			location.reload();
+		}
+document.addEventListener("keydown",jump);
+function jump(){
+	if(character.classList == "animate"){return;}
+    character.classList.add("animate");
+    mySound = new sound('jumpeffect.mp3');
+    mySound.play();
+    setTimeout(removeJump,500); //300ms = length of animation
+};
+function removeJump(){
+    character.classList.remove("animate");
+}
+function checkDead(){
+    let characterTop = parseInt(window.getComputedStyle(character).getPropertyValue("top"));
+    let blockLeft = parseInt(window.getComputedStyle(block).getPropertyValue("left"));
+    let blockLeft2 = parseInt(window.getComputedStyle(block2).getPropertyValue("left"));
+    if(blockLeft<40 && blockLeft>-40 && characterTop>=108){
+    	score.innerHTML = 0;
+        popup.style.display = 'block';
+        block.style.left = '1000px';
+        block.style.animationPlayState = 'paused';
+        block2.style.animationPlayState = 'paused';
+    } else if (blockLeft2<40 && blockLeft2>-40 && characterTop>=108) {
+    	score.innerHTML = 0;
+    	 popup.style.display = 'block';
+    	block.style.animationPlayState = 'paused';
+        block2.style.animationPlayState = 'paused';
+        block2.style.left = '800px';
+    }
+}
+
+setInterval(checkDead, 10);
+setInterval(increaseSpeed,10000);
+function increaseSpeed() {
+	document.getElementById('block').style.animationDuration = '2600ms';
+	document.getElementById('block2').style.animationDuration = '3600ms';
+}
+setInterval(increaseSpeed,20000);
+function increaseSpeed() {
+	document.getElementById('block').style.animationDuration = '2500ms';
+	document.getElementById('block2').style.animationDuration = '3500ms';
+}
+setInterval(increaseSpeed,30000);
+function increaseSpeed() {
+	document.getElementById('block').style.animationDuration = '2400ms';
+	document.getElementById('block2').style.animationDuration = '3400ms';
+}
+setInterval(increaseSpeed,40000);
+function increaseSpeed() {
+	document.getElementById('block').style.animationDuration = '2300ms';
+	document.getElementById('block2').style.animationDuration = '3300ms';
+}
+setInterval(increaseSpeed,50000);
+function increaseSpeed() {
+	document.getElementById('block').style.animationDuration = '2200ms';
+	document.getElementById('block2').style.animationDuration = '3200ms';
+}
+setInterval(increaseSpeed,60000);
+function increaseSpeed() {
+	document.getElementById('block').style.animationDuration = '2100ms';
+	document.getElementById('block2').style.animationDuration = '3100ms';
+}
+setInterval(increaseSpeed,1200000);
+function increaseSpeed() {
+	document.getElementById('block').style.animationDuration = '2000ms';
+	document.getElementById('block2').style.animationDuration = '3000ms';
+}
+setInterval(increaseSpeed,1200000);
+function increaseSpeed() {
+	document.getElementById('block').style.animationDuration = '1800ms';
+	document.getElementById('block2').style.animationDuration = '2800ms';
+}
+setInterval(increaseSpeed,1200000);
+function increaseSpeed() {
+	document.getElementById('block').style.animationDuration = '1600ms';
+	document.getElementById('block2').style.animationDuration = '2600ms';
+}
+setInterval(increaseSpeed,1200000);
+function increaseSpeed() {
+	document.getElementById('block').style.animationDuration = '1500ms';
+	document.getElementById('block2').style.animationDuration = '2100ms';
+}
+setInterval(increaseSpeed,1200000);
+var sun = document.getElementById('sun');
+function changeDay() {
+game.style.backgroundImage = "url('road2.jpg')"
+sun.style.display = 'none';
+document.getElementById('welcm-text').style.display = 'none';
+}
+setInterval(changeDay,50000);
+	</script>
+</html>
