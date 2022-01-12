@@ -1,6 +1,6 @@
 ## Dragon-Game 🐉
 
-A fun to play dragon game built in vanilla JS.
+A fun to play dragon game built in vanilla JS. Check it out [live_link](https://saswat689.github.io/dragon-game.github.io/)
 
 ## Features
 
